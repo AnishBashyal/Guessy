@@ -8,7 +8,13 @@
                 <!-- Right column content -->
                 <div class="p-3">
                     <h2>Game Arena</h2>
-                    <p> In progres</p>
+                    <div id="messagesGame">
+                        
+                    </div>
+                    <div class="mb-5">
+                        <input type="text" name="messageGame" id="messageGame" required>
+                        <input type="button" id = "messageGameBtn" onclick = "sendGameMessage()" value="Send"> 
+                    </div>
                 </div>
             </div>
             <div class="col-sm-6">
@@ -32,7 +38,7 @@
           </div>
       </div>
     
- 
+    <script src="{{ url_for('static', filename = 'game.js') }}"></script>
     <script src="{{ url_for('static', filename = 'chat.js') }}"></script>
 
 {% endblock %}

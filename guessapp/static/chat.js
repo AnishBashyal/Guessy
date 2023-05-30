@@ -9,6 +9,7 @@ messageChatInput.addEventListener("keypress", function(event) {
 
 const sendChatMessage = () => {
     if (messageChatInput.value) {
+        console.log("Chat button pressed")
         chatSocket.emit("message", {data : messageChatInput.value});
         messageChatInput.value = ""
     }

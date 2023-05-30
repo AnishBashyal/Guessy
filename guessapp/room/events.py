@@ -5,15 +5,59 @@ from guessapp.room.routes import room_data
 from flask_socketio import send, join_room, leave_room
 
 users = []
+
+#GAME ARENA
+@socketio.on("connect", namespace="/game")
+def handle_game_connect():
+    room_code = session.get("room_code")
+    name = session.get("name")
+
+    join_room(room_code)
+    users.append({request.sid : name})
+    print(users)
+    message = {
+        "name" : name,
+        "body" : "has joined the game"
+    }
+    send(message, to = room_code, namespace = "/game")
+    print("Player connected", request.sid)
+
+
+@socketio.on("disconnect", namespace="/game")
+def handle_game_disconnect():
+    room_code = session.get("room_code")
+    name = session.get("name")
+    
+    leave_room(room_code)
+    message = {
+        "name" : name,
+        "body" : "has left the game"
+    }
+    send(message, to = room_code, namespace = "/game")
+    print("Client disconnected", request.sid)
+
+
+@socketio.on("message", namespace="/game")
+def handle_game_message(data):
+    room_code = session.get("room_code")
+    name = session.get("name")
+    message = {
+        "name" : name ,
+        "body": data["data"]
+    }
+    print("Message received " , message)
+    send(message, to=room_code, namespace = "/game" )
+
+
+
+#############################CHAT ARENA###############################################
 @socketio.on("connect", namespace="/chat")
-def handle_connect():
+def handle_chat_connect():
     room_code = session.get("room_code")
     name = session.get("name")
 
     join_room(room_code)
     room_data[room_code]["members"]+=1
-    users.append({request.sid : name})
-    print(users)
     message = {
         "name" : name,
         "body" : "has joined the chat"
@@ -22,7 +66,7 @@ def handle_connect():
     print("Client connected", request.sid)
 
 @socketio.on("disconnect", namespace="/chat")
-def handle_connect():
+def handle_chat_disconnect():
     room_code = session.get("room_code")
     name = session.get("name")
     
@@ -39,7 +83,7 @@ def handle_connect():
 
 
 @socketio.on("message", namespace="/chat")
-def handle_message(data):
+def handle_chat_message(data):
     room_code = session.get("room_code")
     name = session.get("name")
     message = {
