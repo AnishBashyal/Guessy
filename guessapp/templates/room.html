@@ -2,19 +2,36 @@
 
 {% block body %}
     <h1> Room : {{ room_code }}</h1>
-    <div id="messages">
-        {% for message in history_messages %}
-            <div class="text">
-                <span>
-                    <strong> {{ message["name"] }} </strong>: {{ message["body"] }}
-                </span>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <!-- Right column content -->
+                <div class="p-3">
+                    <h2>Game Arena</h2>
+                    <p> In progres</p>
+                </div>
             </div>
-        {% endfor %}
-    </div>
-    <div>
-        <input type="text" name="message" id="message" required>
-        <input type="button" id = "messageBtn" onclick = "sendMessage()" value="Send"> 
-    </div>
+            <div class="col-sm-6">
+            <!-- Left column content -->
+                <div class="p-3">
+                    <h1> Chatting Arena </h1>
+                    <div id="messages">
+                        {% for message in history_messages %}
+                            <div class="text">
+                                <span>
+                                    <strong> {{ message["name"] }} </strong>: {{ message["body"] }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-5">
+                        <input type="text" name="message" id="message" required>
+                        <input type="button" id = "messageBtn" onclick = "sendMessage()" value="Send"> 
+                    </div>
+                </div>
+          </div>
+      </div>
+    
  
     <script src="{{ url_for('static', filename = 'script.js') }}"></script>
 

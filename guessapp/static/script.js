@@ -1,4 +1,4 @@
-const socket = io();
+const chatSocket = io("/chat");
 
 const messageInput = document.getElementById("message")
 messageInput.addEventListener("keypress", function(event) {
@@ -9,7 +9,7 @@ messageInput.addEventListener("keypress", function(event) {
 
 const sendMessage = () => {
     if (messageInput.value) {
-        socket.emit("message", {data : messageInput.value});
+        chatSocket.emit("message", {data : messageInput.value});
         messageInput.value = ""
     }
 
@@ -27,11 +27,11 @@ const createMessage = (name, msg) => {
             messageBody.innerHTML += message;
 }
 
-socket.on("connect", () => {
+chatSocket.on("connect", () => {
     console.log("COnnected");
 });
 
-socket.on("message", (data) => {
+chatSocket.on("message", (data) => {
     createMessage(data.name, data.body)
     console.log(data.name, data.body);
 });

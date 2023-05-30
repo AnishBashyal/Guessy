@@ -5,7 +5,7 @@ from guessapp.room.routes import room_data
 from flask_socketio import send, join_room, leave_room
 
 
-@socketio.on("connect")
+@socketio.on("connect", namespace="/chat")
 def handle_connect():
     room_code = session.get("room_code")
     name = session.get("name")
@@ -16,10 +16,10 @@ def handle_connect():
         "name" : name,
         "body" : "has joined the chat"
     }
-    send(message, to = room_code)
+    send(message, to = room_code, namespace = "/chat")
     print("Client connected", request.sid)
 
-@socketio.on("disconnect")
+@socketio.on("disconnect", namespace="/chat")
 def handle_connect():
     room_code = session.get("room_code")
     name = session.get("name")
@@ -32,11 +32,11 @@ def handle_connect():
         "name" : name,
         "body" : "has left the chat"
     }
-    send(message, to = room_code)
+    send(message, to = room_code, namespace = "/chat")
     print("Client disconnected", request.sid)
 
 
-@socketio.on("message")
+@socketio.on("message", namespace="/chat")
 def handle_message(data):
     room_code = session.get("room_code")
     name = session.get("name")
@@ -46,4 +46,4 @@ def handle_message(data):
     }
     room_data[room_code]["messages"].append(message)
     print("Message received " , message)
-    send(message, to=room_code )
+    send(message, to=room_code, namespace = "/chat" )
