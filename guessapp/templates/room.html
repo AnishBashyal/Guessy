@@ -14,8 +14,8 @@
             <div class="col-sm-6">
             <!-- Left column content -->
                 <div class="p-3">
-                    <h1> Chatting Arena </h1>
-                    <div id="messages">
+                    <h1> Chat Arena </h1>
+                    <div id="messagesChat">
                         {% for message in history_messages %}
                             <div class="text">
                                 <span>
@@ -25,14 +25,14 @@
                         {% endfor %}
                     </div>
                     <div class="mb-5">
-                        <input type="text" name="message" id="message" required>
-                        <input type="button" id = "messageBtn" onclick = "sendMessage()" value="Send"> 
+                        <input type="text" name="messageChat" id="messageChat" required>
+                        <input type="button" id = "messageChatBtn" onclick = "sendChatMessage()" value="Send"> 
                     </div>
                 </div>
           </div>
       </div>
     
  
-    <script src="{{ url_for('static', filename = 'script.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'chat.js') }}"></script>
 
 {% endblock %}

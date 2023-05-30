@@ -1,0 +1,1 @@
+const chatSocket = io("/game");

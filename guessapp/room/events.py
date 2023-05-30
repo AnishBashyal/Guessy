@@ -4,7 +4,7 @@ from guessapp.room.extensions import socketio
 from guessapp.room.routes import room_data
 from flask_socketio import send, join_room, leave_room
 
-
+users = []
 @socketio.on("connect", namespace="/chat")
 def handle_connect():
     room_code = session.get("room_code")
@@ -12,6 +12,8 @@ def handle_connect():
 
     join_room(room_code)
     room_data[room_code]["members"]+=1
+    users.append({request.sid : name})
+    print(users)
     message = {
         "name" : name,
         "body" : "has joined the chat"
