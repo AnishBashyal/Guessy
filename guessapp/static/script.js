@@ -8,7 +8,11 @@ messageInput.addEventListener("keypress", function(event) {
 })
 
 const sendMessage = () => {
-    socket.emit("message", {data : messageInput.value});
+    if (messageInput.value) {
+        socket.emit("message", {data : messageInput.value});
+        messageInput.value = ""
+    }
+
 }
 
 const messageBody = document.getElementById("messages")
@@ -16,9 +20,9 @@ const createMessage = (name, msg) => {
      const message = `
                 <div class="text">
                     <span>
-                        <strong> ${name} <strong>: ${msg}
+                        <strong> ${name} </strong>: ${msg}
                     </span>
-                <div>
+                </div>
             `;
             messageBody.innerHTML += message;
 }
