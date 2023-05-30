@@ -6,6 +6,3 @@ main = Blueprint("main", __name__)
 def home():
     return render_template("home.html")
 
-@main.route("/room")
-def room():
-    return render_template("room.html")
