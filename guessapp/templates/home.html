@@ -2,9 +2,9 @@
 
 {% block body %}
     <h1> Home </h1>
-    <form method="post" action="{{url_for('room.arena')}}">
+    <form method="post" action="{{url_for('room.create_room')}}">
         <input type="text" placeholder="Pick a name" name = "name" required> 
         <input type="submit" value="Create Room">
     </form>
-    <a href="{{url_for('room.arena')}}">Room</a>
+    <a href="{{url_for('room.create_room')}}">Room</a>
 {% endblock %}

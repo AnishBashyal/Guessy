@@ -2,5 +2,14 @@
 
 {% block body %}
     <h1> Room </h1>
+    <div id="messages">
+
+    </div>
+    <div>
+        <input type="text" name="message" id="message" required>
+        <input type="button" id = "messageBtn" onclick = "sendMessage()" value="Send"> 
+    </div>
+ 
     <script src="{{ url_for('static', filename = 'script.js') }}"></script>
+
 {% endblock %}
