@@ -1,6 +1,5 @@
 import secrets
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-
 room = Blueprint("room", __name__)
 
 room_data = {}
@@ -12,6 +11,7 @@ def view_room():
     if not name or not room_code or room_code not in room_data:
         # flash("Make sure room code is correct")
         return redirect(url_for("main.home"))
+  
     return render_template("room.html", room_code = room_code, history_messages = room_data[room_code]["messages"])
 
 @room.route("/create_room", methods = ["POST"])

@@ -8,11 +8,22 @@
                 <!-- Right column content -->
                 <div class="p-3">
                     <h2>Game Arena</h2>
+                    <div>
+                        <h1> Count Down : </h1>
+                        <h1 id ="countdown">
+                            
+                        </h1>
+                        
+                    </div>
+                    <div class="mb-5" id="wordInputArea" style="display: none;">
+                        <input type="text" id="wordInput" placeholder="Enter Your Secret Word">
+                        <input type="button" id="wordInputBtn" value="Set" onclick="setWord()">
+                    </div>
                     <div id="messagesGame">
                         
                     </div>
                     <div class="mb-5">
-                        <input type="text" name="messageGame" id="messageGame" required>
+                        <input type="text" name="messageGame" id="messageGame">
                         <input type="button" id = "messageGameBtn" onclick = "sendGameMessage()" value="Send"> 
                     </div>
                 </div>

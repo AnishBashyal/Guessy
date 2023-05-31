@@ -1,5 +1,5 @@
 #importing socketio from events instead of extensions to load the object with all events
-from flask import request, session, flash, redirect, url_for
+from flask import request, session
 from guessapp.room.extensions import socketio
 from guessapp.room.routes import room_data
 from flask_socketio import send, emit, join_room, leave_room
@@ -7,11 +7,13 @@ from flask_socketio import send, emit, join_room, leave_room
 users = []
 #GAME ARENA
 @socketio.on("connect", namespace="/game")
-def handle_game_connect():
+def handle_game_connect(auth):
     room_code = session.get("room_code")
     name = session.get("name")
-
     join_room(room_code)
+
+    if not users:
+        emit("turn", to=request.sid, namespace = "/game")
     users.append({request.sid : name})
     print(users)
     message = {
@@ -24,7 +26,16 @@ def handle_game_connect():
 
 @socketio.on("disconnect", namespace="/game")
 def handle_game_disconnect():
-    users.clear()
+    # users = [user for user in users if request.sid not in users]
+    # if users:
+    #     emit("turn", to=next(iter(users)), namespace = "/game")
+    for user in users:
+        if request.sid in user:
+            users.remove(user)
+            if users:
+                # print("Removed users, and so is", next(iter(users)))
+                emit("turn", to= next(iter(users[0])), namespace = "/game")
+            break
     room_code = session.get("room_code")
     name = session.get("name")
     
@@ -46,22 +57,44 @@ def handle_game_message(data):
         "message": data["data"]
     }
     print("Message received " , message)
+    if request.sid not in users[-1]:
+        if secret_word == data["data"]:
+            message["message"] = secret_word
+            emit("wordGuessed", message, to=room_code, namespace="/game")
+            emit("turn", to=request.sid, namespace = "/game")
+        else:
+            send(message, to=room_code, namespace = "/game" )
+    else:
+        emit("alert", {"message": "You cannot guess your own word"}, to=request.sid, namespace = "/game")
+
+
+@socketio.on("wordSet", namespace="/game")
+def handle_game_word_set(data):
+    room_code = session.get("room_code")
+    name = session.get("name")
     current_turn = users[0]
-    print("Current Turn", current_turn, " Current requeest ", request.sid)
     if request.sid in current_turn:
-        print("Correct Turn///i.e", current_turn[request.sid])
+        global secret_word
+        secret_word = data["data"]
         users.pop(0)
-        print("Popping",users)
         users.append(current_turn)
-        send(message, to=room_code, namespace = "/game" )
+        message = {
+            "name" : name ,
+            "message": data["data"]
+        }
+        emit("wordSet", message, to=room_code, namspace = "/game")
     else:
         emit("alert", {"message": "Not Your Turn"}, to=request.sid, namespace = "/game")
 
 
+@socketio.on("wordNotGuessed", namespace="/game")
+def handle_game_word_not_guessed():
+    emit("turn", to=request.sid, namespace = "/game")
+
 
 #############################CHAT ARENA###############################################
 @socketio.on("connect", namespace="/chat")
-def handle_chat_connect():
+def handle_chat_connect(auth):
     room_code = session.get("room_code")
     name = session.get("name")
 
