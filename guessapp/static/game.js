@@ -34,6 +34,11 @@ gameSocket.on("connect", () => {
 
 gameSocket.on("message", (data) => {
     console.log("Message from Game")
-    createGameMessage(data.name, data.body)
-    console.log(data.name, data.body);
+    createGameMessage(data.name, data.message)
+    console.log(data.name, data.message);
+});
+
+gameSocket.on("alert", (data) => {
+    console.log("Not your turn")
+    alert("Not your turn")
 });

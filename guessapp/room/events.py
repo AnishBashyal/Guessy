@@ -2,10 +2,9 @@
 from flask import request, session, flash, redirect, url_for
 from guessapp.room.extensions import socketio
 from guessapp.room.routes import room_data
-from flask_socketio import send, join_room, leave_room
+from flask_socketio import send, emit, join_room, leave_room
 
 users = []
-
 #GAME ARENA
 @socketio.on("connect", namespace="/game")
 def handle_game_connect():
@@ -17,7 +16,7 @@ def handle_game_connect():
     print(users)
     message = {
         "name" : name,
-        "body" : "has joined the game"
+        "message" : "has joined the game"
     }
     send(message, to = room_code, namespace = "/game")
     print("Player connected", request.sid)
@@ -25,16 +24,17 @@ def handle_game_connect():
 
 @socketio.on("disconnect", namespace="/game")
 def handle_game_disconnect():
+    users.clear()
     room_code = session.get("room_code")
     name = session.get("name")
     
     leave_room(room_code)
     message = {
         "name" : name,
-        "body" : "has left the game"
+        "message" : "has left the game"
     }
     send(message, to = room_code, namespace = "/game")
-    print("Client disconnected", request.sid)
+    print("Player disconnected", request.sid)
 
 
 @socketio.on("message", namespace="/game")
@@ -43,10 +43,19 @@ def handle_game_message(data):
     name = session.get("name")
     message = {
         "name" : name ,
-        "body": data["data"]
+        "message": data["data"]
     }
     print("Message received " , message)
-    send(message, to=room_code, namespace = "/game" )
+    current_turn = users[0]
+    print("Current Turn", current_turn, " Current requeest ", request.sid)
+    if request.sid in current_turn:
+        print("Correct Turn///i.e", current_turn[request.sid])
+        users.pop(0)
+        print("Popping",users)
+        users.append(current_turn)
+        send(message, to=room_code, namespace = "/game" )
+    else:
+        emit("alert", {"message": "Not Your Turn"}, to=request.sid, namespace = "/game")
 
 
 
@@ -60,7 +69,7 @@ def handle_chat_connect():
     room_data[room_code]["members"]+=1
     message = {
         "name" : name,
-        "body" : "has joined the chat"
+        "message" : "has joined the chat"
     }
     send(message, to = room_code, namespace = "/chat")
     print("Client connected", request.sid)
@@ -76,7 +85,7 @@ def handle_chat_disconnect():
         del room_data[room_code]
     message = {
         "name" : name,
-        "body" : "has left the chat"
+        "message" : "has left the chat"
     }
     send(message, to = room_code, namespace = "/chat")
     print("Client disconnected", request.sid)
@@ -88,7 +97,7 @@ def handle_chat_message(data):
     name = session.get("name")
     message = {
         "name" : name ,
-        "body": data["data"]
+        "message": data["data"]
     }
     room_data[room_code]["messages"].append(message)
     print("Message received " , message)

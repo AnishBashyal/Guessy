@@ -33,6 +33,6 @@ chatSocket.on("connect", () => {
 });
 
 chatSocket.on("message", (data) => {
-    createChatMessage(data.name, data.body)
-    console.log(data.name, data.body);
+    createChatMessage(data.name, data.message)
+    console.log(data.name, data.message);
 });
