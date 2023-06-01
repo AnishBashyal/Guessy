@@ -65,7 +65,7 @@ def handle_game_message(data):
     }
     print("Message received " , message)
     if request.sid is not current_turn_sid and secret_word:
-        if secret_word == data["data"]:
+        if secret_word.lower() == data["data"].lower():
             message["message"] = secret_word
             emit("wordGuessed", message, to=room_code, namespace="/game")
             currentTurn()

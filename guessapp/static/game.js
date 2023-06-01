@@ -78,7 +78,7 @@ gameSocket.on("turn", () => {
 
 gameSocket.on("wordSet", (data)=>{
     console.log("Time starts")
-    let timeleft = 30;
+    let timeleft = 10;
     Timer = setInterval(function(){
         if(timeleft <= 0){
             clearTimer()
@@ -96,3 +96,4 @@ gameSocket.on("wordGuessed", (data)=>{
     clearTimer()
     alert (`Winner is ${data.name} and correct word was ${data.message}`);
 })
+
