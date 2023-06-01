@@ -5,17 +5,33 @@ from guessapp.room.routes import room_data
 from flask_socketio import send, emit, join_room, leave_room
 
 users = []
+room_code, name, secret_word, current_turn_sid = "", "", "", ""
+
+def currentTurn():
+    global secret_word, current_turn_sid
+    secret_word, current_turn_sid = "", ""
+    s_id, s_name = next(iter(users[0].items()))
+    print("CURRENT TURNRRRRR", s_name)
+    emit("turn", to=s_id, namespace = "/game")
+    emit("turnDecided", {"name" : s_name}, to = room_code, namespace="/game" )
+
 #GAME ARENA
 @socketio.on("connect", namespace="/game")
 def handle_game_connect(auth):
+    global room_code, name
     room_code = session.get("room_code")
     name = session.get("name")
-    join_room(room_code)
 
-    if not users:
-        emit("turn", to=request.sid, namespace = "/game")
+    join_room(room_code)
     users.append({request.sid : name})
+
+    if len(users) == 1:
+       currentTurn()
+    else:
+        emit("turnDecided", {"name" : next(iter(users[0].items()))[1]}, to = request.sid, namespace="/game" )
+
     print(users)
+
     message = {
         "name" : name,
         "message" : "has joined the game"
@@ -26,11 +42,10 @@ def handle_game_connect(auth):
 
 @socketio.on("disconnect", namespace="/game")
 def handle_game_disconnect():
-    if request.sid == next(iter(users[0])) and len(users) > 1:
-        emit("turn", to= next(iter(users[1])), namespace = "/game")
+    deleted_user = users[0]
     users[:] = [user for user in users if request.sid not in user]  
-    room_code = session.get("room_code")
-    name = session.get("name")
+    if users and request.sid in deleted_user:
+        currentTurn()
     
     leave_room(room_code)
     message = {
@@ -43,34 +58,30 @@ def handle_game_disconnect():
 
 @socketio.on("message", namespace="/game")
 def handle_game_message(data):
-    room_code = session.get("room_code")
-    name = session.get("name")
+    global secret_word
     message = {
         "name" : name ,
         "message": data["data"]
     }
     print("Message received " , message)
-    if request.sid not in users[-1]:
+    if request.sid is not current_turn_sid and secret_word:
         if secret_word == data["data"]:
             message["message"] = secret_word
             emit("wordGuessed", message, to=room_code, namespace="/game")
-            emit("turn", to=request.sid, namespace = "/game")
+            currentTurn()
         else:
             send(message, to=room_code, namespace = "/game" )
     else:
-        emit("alert", {"message": "You cannot guess your own word"}, to=request.sid, namespace = "/game")
+        emit("alert", {"message": "You are locked for now!"}, to=request.sid, namespace = "/game")
 
 
 @socketio.on("wordSet", namespace="/game")
 def handle_game_word_set(data):
-    room_code = session.get("room_code")
-    name = session.get("name")
-    current_turn = users[0]
-    if request.sid in current_turn:
-        global secret_word
+    global secret_word, current_turn_sid
+    if not current_turn_sid and request.sid in users[0]:
+        current_turn_sid = request.sid
         secret_word = data["data"]
-        users.pop(0)
-        users.append(current_turn)
+        users.append(users.pop(0))
         message = {
             "name" : name ,
             "message": data["data"]
@@ -82,14 +93,12 @@ def handle_game_word_set(data):
 
 @socketio.on("wordNotGuessed", namespace="/game")
 def handle_game_word_not_guessed():
-    emit("turn", to=request.sid, namespace = "/game")
+    currentTurn()
 
 
 #############################CHAT ARENA###############################################
 @socketio.on("connect", namespace="/chat")
 def handle_chat_connect(auth):
-    room_code = session.get("room_code")
-    name = session.get("name")
 
     join_room(room_code)
     room_data[room_code]["members"]+=1
@@ -102,8 +111,6 @@ def handle_chat_connect(auth):
 
 @socketio.on("disconnect", namespace="/chat")
 def handle_chat_disconnect():
-    room_code = session.get("room_code")
-    name = session.get("name")
     
     leave_room(room_code)
     room_data[room_code]["members"]-=1
@@ -119,8 +126,6 @@ def handle_chat_disconnect():
 
 @socketio.on("message", namespace="/chat")
 def handle_chat_message(data):
-    room_code = session.get("room_code")
-    name = session.get("name")
     message = {
         "name" : name ,
         "message": data["data"]

@@ -1,20 +1,28 @@
 {% extends "layout.html" %}
 
 {% block body %}
-    <h1> Room : {{ room_code }}</h1>
+    <div class="container">
+        <div class="row my-5">
+            <div class="col-md-4">
+                <h3 id = "currentturn">  </h3>
+            </div>
+            <div class="col-md-4">
+                <h3> Room : {{ room_code }}</h3>
+            </div>
+            <div class="col-md-4">
+                <h3 id ="countdown">   
+                    Time Remain :  &infin;         
+                </h3>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
         <div class="row">
             <div class="col-sm-6">
                 <!-- Right column content -->
                 <div class="p-3">
                     <h2>Game Arena</h2>
-                    <div>
-                        <h1> Count Down : </h1>
-                        <h1 id ="countdown">
-                            
-                        </h1>
-                        
-                    </div>
                     <div class="mb-5" id="wordInputArea" style="display: none;">
                         <input type="text" id="wordInput" placeholder="Enter Your Secret Word">
                         <input type="button" id="wordInputBtn" value="Set" onclick="setWord()">
