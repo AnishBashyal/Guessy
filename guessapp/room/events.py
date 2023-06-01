@@ -26,16 +26,9 @@ def handle_game_connect(auth):
 
 @socketio.on("disconnect", namespace="/game")
 def handle_game_disconnect():
-    # users = [user for user in users if request.sid not in users]
-    # if users:
-    #     emit("turn", to=next(iter(users)), namespace = "/game")
-    for user in users:
-        if request.sid in user:
-            users.remove(user)
-            if users:
-                # print("Removed users, and so is", next(iter(users)))
-                emit("turn", to= next(iter(users[0])), namespace = "/game")
-            break
+    if request.sid == next(iter(users[0])) and len(users) > 1:
+        emit("turn", to= next(iter(users[1])), namespace = "/game")
+    users[:] = [user for user in users if request.sid not in user]  
     room_code = session.get("room_code")
     name = session.get("name")
     
