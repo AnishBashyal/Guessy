@@ -1,3 +1,22 @@
 .overflow-auto {
     max-height: 200px;
 }
+
+.nav-row{
+    color:white
+}
+
+.home {
+    /* background-image: linear-gradient(to left, white  0%, white  50%, black 50%, black 100%); */
+    background-image: linear-gradient(to left, #E6CEA0  0%, #E6CEA0  50%, rgb(50, 50, 50) 50%, rgb(50, 50, 50) 100%);
+    height: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.room {
+    background-image: linear-gradient(to top, #E6CEA0  0%, #E6CEA0  50%, rgb(50, 50, 50) 50%, rgb(50, 50, 50) 100%);
+    height: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}

@@ -9,7 +9,7 @@ messageChatInput.addEventListener("keypress", function(event) {
 
 const sendChatMessage = () => {
     if (messageChatInput.value) {
-        console.log("Chat button pressed")
+        // console.log("Chat button pressed")
         chatSocket.emit("message", {data : messageChatInput.value});
         messageChatInput.value = ""
     }
@@ -34,11 +34,11 @@ const createChatMessage = (name, msg) => {
 }
 
 chatSocket.on("connect", () => {
-    console.log("COnnected");
+    // console.log("COnnected");
 });
 
 chatSocket.on("message", (data) => {
     createChatMessage(data.name, data.message)
-    console.log(data.name, data.message);
+    // console.log(data.name, data.message);
 });
 

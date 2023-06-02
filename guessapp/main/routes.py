@@ -5,5 +5,5 @@ main = Blueprint("main", __name__)
 @main.route("/")
 def home():
     name = session.get("name") if session.get("name") else ""   
-    return render_template("home.html", name=name)
+    return render_template("home.html", page="home", name=name)
 

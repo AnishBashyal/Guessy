@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_session import Session
-from guessapp.room.events import socketio
+from guessapp.room.game_events import socketio
 from guessapp.main.routes import main
 from guessapp.room.routes import room
 

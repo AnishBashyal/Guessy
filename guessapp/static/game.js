@@ -12,7 +12,7 @@ messageGameInput.addEventListener("keypress", function(event) {
 
 const sendGameMessage = () => {
     if (messageGameInput.value && gameStarted && !turn) {
-        console.log("Game button pressed")
+        // console.log("Game button pressed")
         gameSocket.emit("message", {data : messageGameInput.value});
         messageGameInput.value = ""
     } else {
@@ -46,11 +46,14 @@ wordInput.addEventListener("keypress", function(event) {
 })
 
 const setWord = () => {
-    if (wordInput.value && !gameStarted && turn) {
+    if(!wordInput.value || wordInput.value.length > 10 || wordInput.value.split(" ").length > 1) {
+        showAlert("Secret must be a single word upto 10 letters", "danger")
+    } else if (gameStarted || !turn) {
+        showAlert("You are locked for the moment..", "danger")
+    } else {
         gameSocket.emit("wordSet",{data:wordInput.value});
-        document.getElementById("wordInputArea").style.display="none";
         wordInput.value = "";
-    }
+    } 
 }
 
 const clearTimer = () => {
@@ -72,8 +75,6 @@ const showAlert = (message, category) => {
     strong.textContent = message;
     div.appendChild(strong);
 
-  
-    // Create the button for closing the alert
     const button = document.createElement("button");
     button.type = "button";
     button.id = "close-alert"
@@ -82,7 +83,6 @@ const showAlert = (message, category) => {
     button.setAttribute("aria-label", "Close");
     div.appendChild(button);
 
-    // Add the alert div to the document body or any desired parent element
     alerts.appendChild(div);
 
 setTimeout(()=>{
@@ -91,13 +91,13 @@ setTimeout(()=>{
 };
 
 gameSocket.on("connect", () => {
-    console.log("COnnected 2");
+    // console.log("COnnected 2");
 });
 
 gameSocket.on("message", (data) => {
-    console.log("Message from Game");
+    // console.log("Message from Game");
     createGameMessage(data.name, data.message);
-    console.log(data.name, data.message);
+    // console.log(data.name, data.message);
 });
 
 gameSocket.on("setSid", (data) =>{
@@ -105,24 +105,25 @@ gameSocket.on("setSid", (data) =>{
 });
 
 gameSocket.on("alert", (data) => {
-    console.log(data.message);
+    // console.log(data.message);
     showAlert(data.message, data.category);
 });
 
 gameSocket.on("turnDecided", (data)=>{
-    console.log(turn);
+    // console.log(turn);
     document.getElementById("currentturn").innerText = "Current Turn : " + (turn ? "You" : data.name);
 });
 
 gameSocket.on("turn", () => {
-    console.log("Your turn boy!");
+    // console.log("Your turn boy!");
     document.getElementById("wordInputArea").style.display="flex";
     turn = true;
 
 });
 
 gameSocket.on("wordSet", (data)=>{
-    console.log("Time starts");
+    // console.log("Time starts");
+    document.getElementById("wordInputArea").style.display="none";
     gameStarted = true;
     let timeleft = 10;
     Timer = setInterval(function(){
@@ -147,7 +148,7 @@ gameSocket.on("wordGuessed", (data)=>{
 });
 
 gameSocket.on("displayTable", (data) => {
-    console.log(data[0]);
+    // console.log(data[0]);
     let index = 0;
     table = document.getElementById("leaderboardtable");
     table.innerHTML="";
@@ -174,8 +175,6 @@ gameSocket.on("displayTable", (data) => {
         const td2 = document.createElement("td");
         td2.textContent = data[0][u_sid];
         tr.appendChild(td2);
-
- 
 
         table.appendChild(tr);
       }
