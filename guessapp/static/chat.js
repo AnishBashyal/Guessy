@@ -18,14 +18,19 @@ const sendChatMessage = () => {
 
 const messageChatBody = document.getElementById("messagesChat")
 const createChatMessage = (name, msg) => {
-     const message = `
-                <div class="text">
-                    <span>
-                        <strong> ${name} </strong>: ${msg}
-                    </span>
-                </div>
-            `;
-            messageChatBody.innerHTML += message;
+    div = document.createElement("div");
+    div.classList = "text";
+    span = document.createElement("span");
+    strong = document.createElement("strong");
+    strong.innerText = name;
+    text = document.createTextNode(` : ${msg}`);
+
+    span.appendChild(strong);
+    span.appendChild(text);
+    div.appendChild(span);
+    messageChatBody.appendChild(div);
+    messageChatBody.scrollTop = messageChatBody.scrollHeight;
+
 }
 
 chatSocket.on("connect", () => {
