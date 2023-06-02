@@ -11,10 +11,12 @@ messageGameInput.addEventListener("keypress", function(event) {
 })
 
 const sendGameMessage = () => {
-    if (messageGameInput.value && gameStarted) {
+    if (messageGameInput.value && gameStarted && !turn) {
         console.log("Game button pressed")
         gameSocket.emit("message", {data : messageGameInput.value});
         messageGameInput.value = ""
+    } else {
+        showAlert("You are locked for now!", "warning")
     }
 
 }
@@ -39,8 +41,7 @@ wordInput.addEventListener("keypress", function(event) {
 })
 
 const setWord = () => {
-    if (wordInput.value && turn ) {
-        turn=false
+    if (wordInput.value && !gameStarted && turn) {
         gameSocket.emit("wordSet",{data:wordInput.value});
         document.getElementById("wordInputArea").style.display="none"
         wordInput.value = ""
@@ -50,7 +51,37 @@ const setWord = () => {
 const clearTimer = () => {
     clearInterval(Timer);
     gameStarted = false
+    turn = false
     document.getElementById("countdown").innerHTML = "Time Remain : &infin; ";
+}
+
+const showAlert = (message, category) => {
+    const alerts = document.getElementById("alerts")
+
+    const div = document.createElement("div");
+    div.className = `alert alert-${category} alert-dismissible fade show`;
+    div.setAttribute("role", "alert");
+
+    const strong = document.createElement("strong");
+    strong.textContent = message;
+    div.appendChild(strong);
+
+  
+    // Create the button for closing the alert
+    const button = document.createElement("button");
+    button.type = "button";
+    button.id = "close-alert"
+    button.className = "btn-close";
+    button.setAttribute("data-bs-dismiss", "alert");
+    button.setAttribute("aria-label", "Close");
+    div.appendChild(button);
+
+    // Add the alert div to the document body or any desired parent element
+    alerts.appendChild(div);
+
+    setTimeout(()=>{
+        document.getElementById("close-alert").click()
+    }, 3000)
 }
 gameSocket.on("connect", () => {
     console.log("COnnected 2");
@@ -67,27 +98,7 @@ gameSocket.on("setSid", (data) =>{
 })
 gameSocket.on("alert", (data) => {
     console.log(data.message)
-    const alerts = document.getElementById("alerts")
-
-    const div = document.createElement("div");
-    div.className = `alert alert-${data.category} alert-dismissible fade show`;
-    div.setAttribute("role", "alert");
-
-    const strong = document.createElement("strong");
-    strong.textContent = data.message;
-    div.appendChild(strong);
-
-  
-    // Create the button for closing the alert
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "btn-close";
-    button.setAttribute("data-bs-dismiss", "alert");
-    button.setAttribute("aria-label", "Close");
-    div.appendChild(button);
-
-    // Add the alert div to the document body or any desired parent element
-    alerts.appendChild(div);
+    showAlert(data.message, data.category)
 });
 
 gameSocket.on("turnDecided", (data)=>{
@@ -104,12 +115,14 @@ gameSocket.on("turn", () => {
 
 gameSocket.on("wordSet", (data)=>{
     console.log("Time starts")
-    let timeleft = 10;
     gameStarted = true
+    let timeleft = 10;
     Timer = setInterval(function(){
         if(timeleft <= 0){
+            if (turn) showAlert("Tough Choice!","success");
+            else showAlert (`Winner is nobody..  ${data.name} choice of word was ${data.message}`, "danger");
+
             clearTimer()
-            alert (`Winner is nobody..  ${data.name} choice of word was ${data.message}`);
             gameSocket.emit("wordNotGuessed")
         } else  {
             document.getElementById("countdown").innerText =  "Time Remain : " + timeleft;
@@ -120,8 +133,9 @@ gameSocket.on("wordSet", (data)=>{
 })
 
 gameSocket.on("wordGuessed", (data)=>{
+    if (data.winner_sid == sid) showAlert("Bingo!", "success")
+    else showAlert (`Winner is ${data.name} and correct word was ${data.message}`, "info");
     clearTimer()
-    alert (`Winner is ${data.name} and correct word was ${data.message}`);
 })
 
 gameSocket.on("displayTable", (data) => {

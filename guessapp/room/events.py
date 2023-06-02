@@ -74,6 +74,7 @@ def handle_game_message(data):
     if request.sid is not current_turn_sid and secret_word:
         if secret_word.lower() == data["data"].lower():
             message["message"] = secret_word
+            message["winner_sid"] = request.sid
             emit("wordGuessed", message, to=room_code, namespace="/game")
             session["score"] += 1
             scores_data[room_code][request.sid] = session.get("score")
