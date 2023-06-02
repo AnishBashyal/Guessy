@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, session
+from flask import Blueprint, render_template, session, flash
 
 main = Blueprint("main", __name__)
 
 @main.route("/")
 def home():
-    session.clear()
-    return render_template("home.html")
+    name = session.get("name") if session.get("name") else ""   
+    return render_template("home.html", name=name)
 

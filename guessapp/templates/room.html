@@ -31,7 +31,7 @@
                         
                     </div>
                     <div class="mb-5">
-                        <input type="text" name="messageGame" id="messageGame">
+                        <input type="text" name="messageGame" id="messageGame" placeholder="Guess the word">
                         <input type="button" id = "messageGameBtn" onclick = "sendGameMessage()" value="Send"> 
                     </div>
                 </div>
@@ -59,29 +59,19 @@
     </div>
     <div class="d-flex justify-content-center">
         <table class="table table-dark table-hover table-bordered">
+            <caption> The number is your order in the turn </caption>
             <thead>
+                <tr class="text-center">
+                    <th colspan="3"> Leader Board </th>
+                </tr>
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Score</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>2</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>3</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td>John</td>
-                <td> 5</td>
-              </tr>
+            <tbody id="leaderboardtable">
+                
             </tbody>
           </table>   
 

@@ -36,3 +36,4 @@ chatSocket.on("message", (data) => {
     createChatMessage(data.name, data.message)
     console.log(data.name, data.message);
 });
+

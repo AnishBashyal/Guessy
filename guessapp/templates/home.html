@@ -5,7 +5,7 @@
     <div>
         <h1> Create Room</h1>
         <form method="post" action="{{url_for('room.create_room')}}">
-            <input type="text" placeholder="Pick a name" name = "name" required> 
+            <input type="text" placeholder="Pick a name" name = "name" value="{{name}}" required> 
             <input type="submit" value="Create Room">
         </form>
     </div>
@@ -13,7 +13,7 @@
     <div>
     <h1> Join Room</h1>
     <form method="post" action="{{url_for('room.join_room')}}">
-        <input type="text" placeholder="Pick a name" name = "name" required> 
+        <input type="text" placeholder="Pick a name" name = "name" value="{{name}}" required> 
         <input type="text" placeholder="Enter Room Code" name = "room_code" required>
         <input type="submit" value="Join Room">
     </form>

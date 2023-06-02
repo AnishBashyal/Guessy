@@ -1,3 +1,2 @@
 from flask_socketio import SocketIO
-
-socketio = SocketIO()
+socketio = SocketIO(manage_session=False)
