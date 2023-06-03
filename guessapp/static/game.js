@@ -125,7 +125,7 @@ gameSocket.on("wordSet", (data)=>{
     // console.log("Time starts");
     document.getElementById("wordInputArea").style.display="none";
     gameStarted = true;
-    let timeleft = 10;
+    let timeleft = 30;
     Timer = setInterval(function(){
         if(timeleft <= 0){
             if (turn) showAlert("Tough Choice!","success");

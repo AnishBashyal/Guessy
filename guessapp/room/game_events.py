@@ -1,4 +1,5 @@
 #importing socketio from events instead of extensions to load the object with all events
+from difflib import SequenceMatcher
 from flask import request, session
 from guessapp.room.chat_events import socketio
 from guessapp.room.routes import scores_data, users_data
@@ -91,6 +92,16 @@ def handle_game_message(data):
             currentTurn()
         else:
             send(message, to=room_code, namespace = "/game" )
+            similarity = SequenceMatcher(None, secret_word, data["data"]).ratio()
+            if similarity > 0.75:
+                emit("alert", {"message":"Looks very similar to the secret!", "category" : "success"}, to=request.sid, namespace="/game")
+            elif similarity > 0.5:
+                emit("alert", {"message":"Looks similar to the secret!", "category" : "info"}, to=request.sid, namespace="/game")
+            elif similarity > 0.25:
+                emit("alert", {"message":"Looks different from the secret!", "category" : "warning"}, to=request.sid, namespace="/game")
+            else:
+                emit("alert", {"message":"Looks very different from the secret", "category" : "danger"}, to=request.sid, namespace="/game")
+
     else:
         emit("alert", {"message": "You are locked for now!",  "category" : "warning"}, to=request.sid, namespace = "/game")
 
