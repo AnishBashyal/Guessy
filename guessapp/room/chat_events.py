@@ -1,5 +1,5 @@
 from flask import session
-from guessapp.room.extensions import socketio
+from guessapp.extensions import socketio
 from guessapp.room.routes import room_data, scores_data, users_data
 from flask_socketio import send, join_room, leave_room
 

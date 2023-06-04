@@ -48,10 +48,15 @@ def handle_game_connect(auth):
 
 @socketio.on("disconnect", namespace="/game")
 def handle_game_disconnect():
+    
     room_code = session.get("room_code")
     name = session.get("name")
 
-    deleted_user = users_data[room_code][0]
+    if not users_data.get(room_code):
+        return
+    
+    deleted_user = users_data.get(room_code)[0]
+
     users_data[room_code][:] = [user for user in users_data[room_code] if request.sid not in user]  
     del scores_data[room_code][request.sid]
 

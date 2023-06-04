@@ -1,18 +1,20 @@
-import os
 from flask import Flask
-from flask_session import Session
 from guessapp.room.game_events import socketio
+from guessapp.extensions import sess
+from guessapp.config import Config
 from guessapp.main.routes import main
 from guessapp.room.routes import room
 
 
-def create_app():
+def create_app(config_class=Config):
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
-    app.config["SESSION_TYPE"] = "filesystem"
+    app.config.from_object(config_class)
+
+    sess.init_app(app)
+    socketio.init_app(app)
 
     app.register_blueprint(main)
     app.register_blueprint(room)
-    Session(app)
-    socketio.init_app(app)
+
+
     return app
