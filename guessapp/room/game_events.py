@@ -51,6 +51,7 @@ def handle_game_disconnect():
     
     room_code = session.get("room_code")
     name = session.get("name")
+    leave_room(room_code)
 
     if not users_data.get(room_code):
         return
@@ -63,7 +64,6 @@ def handle_game_disconnect():
     if users_data[room_code] and request.sid in deleted_user:
         currentTurn()
     
-    leave_room(room_code)
     message = {
         "name" : name,
         "message" : "has left the game"
