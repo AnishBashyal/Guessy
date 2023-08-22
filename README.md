@@ -1,4 +1,4 @@
-# GuessTheWord
+# Guessy
 
 Gather in a room, have a real time communication, and try to guess each others' word. 
 
